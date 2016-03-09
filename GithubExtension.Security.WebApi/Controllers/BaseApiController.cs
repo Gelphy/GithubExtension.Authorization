@@ -1,9 +1,5 @@
 ﻿using GithubExtension.Security.DAL.Infrastructure;
 using Microsoft.AspNet.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web.Http;
 using System.Net.Http;
 using Microsoft.AspNet.Identity.Owin;
@@ -26,17 +22,12 @@ namespace GithubExtension.Security.WebApi.Controllers
         }
 
 
-
         protected SecurityRoleManager SecurityRoleManager
         {
             get
             {
                 return _SecurityRoleManager ?? Request.GetOwinContext().GetUserManager<SecurityRoleManager>();
             }
-        }
-
-        public BaseApiController()
-        {
         }
 
         protected ModelFactory TheModelFactory

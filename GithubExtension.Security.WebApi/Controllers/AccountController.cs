@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using GithubExtension.Security.DAL.Entities;
 using GithubExtension.Security.WebApi.Models;
+using Newtonsoft.Json;
 
 
 namespace GithubExtension.Security.WebApi.Controllers
@@ -95,31 +97,48 @@ namespace GithubExtension.Security.WebApi.Controllers
         }
 
         [Route("create")]
-        public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
+        [HttpPost]
+        public async Task<IHttpActionResult> CreateUser(string token)
         {
-            if (!ModelState.IsValid)
+            using (var httpClient = new HttpClient())
             {
-                return BadRequest(ModelState);
+                var requestUri = string.Format("https://api.github.com/user?access_token={0}", token);
+                var message = new HttpRequestMessage(HttpMethod.Get, requestUri);
+                message.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
+
+                var response = await httpClient.SendAsync(message);
+                
+
+                if (!response.IsSuccessStatusCode)
+                    return StatusCode( (HttpStatusCode) 422 );
+
+
+                var dto = JsonConvert.DeserializeObject<UserDTO>(await response.Content.ReadAsStringAsync());
+                var user = new User()
+                {
+                    Email = "",
+                    UserName = dto.Login,
+                    Token = token
+                };
+
+                IdentityResult addUserResult = await ApplicationUserManager.CreateAsync(user);
+
+                if (!addUserResult.Succeeded)
+                {
+                    return GetErrorResult(addUserResult);
+                }
+
+
+                // Change identity user to app user
+
+                Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
+
+                return Created(locationHeader, TheModelFactory.Create(user));
             }
+          
 
-            var user = new User()
-            {
-                UserName = createUserModel.Username,
-                Email = createUserModel.Email,
-              
-            };
+           
 
-            // Change identity user to app user
-            IdentityResult addUserResult = await this.ApplicationUserManager.CreateAsync(user, createUserModel.Password);
-
-            if (!addUserResult.Succeeded)
-            {
-                return GetErrorResult(addUserResult);
-            }
-
-            Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
-
-            return Created(locationHeader, TheModelFactory.Create(user));
         }
     }
 }

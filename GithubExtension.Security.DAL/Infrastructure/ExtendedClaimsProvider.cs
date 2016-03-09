@@ -9,7 +9,7 @@ using Claim = System.Security.Claims.Claim;
 
 namespace GithubExtension.Security.DAL.Infrastructure
 {
-    class ExtendedClaimsProvider
+    public class ExtendedClaimsProvider
     {
         public static IEnumerable<Claim> GetClaims(User user)
         {

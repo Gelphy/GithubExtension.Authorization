@@ -80,7 +80,6 @@ namespace GithubExtension.Security.WebApi.Controllers
             }
 
             return NotFound();
-
         }
 
         [Route("ManageUsersInRole")]

@@ -18,7 +18,7 @@ namespace GithubExtension.Security.DAL.Context
 
         static SecurityContext()
         {
-            Database.SetInitializer<SecurityContext>(new SecurityDbInit());
+            Database.SetInitializer(new SecurityDbInit());
         }
 
         public static SecurityContext Create()
