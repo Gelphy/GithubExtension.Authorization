@@ -1,28 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Security.Claims;
-using GithubExtensionClaim = GithubExtension.Security.DAL.Entities.Claim;
+using System.Web;
+using System.Web.Http;
 
 namespace GithubExtension.Security.WebApi.Controllers
 {
-    public class ClaimsController : Controller
+    [System.Web.Mvc.RoutePrefix("api/claims")]
+    public class ClaimsController : BaseApiController
     {
-        public Security.DAL.Context.SecurityContext SecurityContext { get; set; }
-
-        // GET: Claims
-        public ActionResult Index()
+        [System.Web.Mvc.Authorize]
+        [System.Web.Mvc.Route("")]
+        public IHttpActionResult GetClaims()
         {
-            // Get id from frontend project id
-            int id = 1;
+            var identity = User.Identity as ClaimsIdentity;
 
-            var users = SecurityContext.Users.Where(u => u.Claims.Cast<GithubExtensionClaim>().Any(c => c.ClaimType == ClaimTypes.Role && (c.ProjectId == id)));
-          
-            return View();
+            var claims = from c in identity.Claims
+                         select new
+                         {
+                             subject = c.Subject.Name,
+                             type = c.Type,
+                             value = c.Value
+                         };
+
+            return Ok(claims);
         }
-
 
     }
 }

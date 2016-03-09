@@ -1,10 +1,5 @@
 ﻿using System.Data.Entity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GithubExtension.Security.DAL.Entities;
 
 namespace GithubExtension.Security.DAL.Context

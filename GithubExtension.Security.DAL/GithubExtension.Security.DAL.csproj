@@ -87,6 +87,8 @@
     <Compile Include="Entities\Claim.cs" />
     <Compile Include="Entities\Collaborator.cs" />
     <Compile Include="Entities\Project.cs" />
+    <Compile Include="Infrastructure\Configuration.cs" />
+    <Compile Include="Infrastructure\ExtendedClaimsProvider.cs" />
     <Compile Include="Infrastructure\SecurityRoleManager.cs" />
     <Compile Include="Migrations\201603071315387_initial.cs" />
     <Compile Include="Migrations\201603071315387_initial.Designer.cs">

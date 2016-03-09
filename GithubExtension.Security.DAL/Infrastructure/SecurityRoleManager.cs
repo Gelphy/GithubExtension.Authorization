@@ -9,25 +9,25 @@ using GithubExtension.Security.DAL.Context;
 
 namespace GithubExtension.Security.DAL.Infrastructure
 {
-    public class SecurityRoleManager : RoleManager<Role>, IDisposable
+    public class SecurityRoleManager : RoleManager<IdentityRole>
     {
-        public SecurityRoleManager(RoleStore<Role> store)
-            : base(store)
-        {
-        }
+        //public SecurityRoleManager(RoleStore<Role> store)
+        //    : base(store)
+        //{
+        //}
 
         // Check why we need IRoleStore<Role, string>
-        public SecurityRoleManager(IRoleStore<Role, string> store)
+        public SecurityRoleManager(IRoleStore<IdentityRole, string> store)
             : base(store)
         {
         }
 
         public static SecurityRoleManager Create(
-        IdentityFactoryOptions<SecurityRoleManager> options,
+            IdentityFactoryOptions<SecurityRoleManager> options,
         IOwinContext context)
         {
             return new SecurityRoleManager(new
-            RoleStore<Role>(context.Get<SecurityContext>()));
+            RoleStore<IdentityRole>(context.Get<SecurityContext>()));
         }
     }
 }

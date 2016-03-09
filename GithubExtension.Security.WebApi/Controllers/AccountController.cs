@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using GithubExtension.Security.DAL.Entities;
+using GithubExtension.Security.WebApi.Models;
 
 
 namespace GithubExtension.Security.WebApi.Controllers
@@ -12,13 +14,14 @@ namespace GithubExtension.Security.WebApi.Controllers
     [RoutePrefix("api/accounts")]
     public class AccountsController : BaseApiController
     {
-
+        [Authorize(Roles = "Admin")]
         [Route("users")]
         public IHttpActionResult GetUsers()
         {
             return Ok(this.ApplicationUserManager.Users.ToList().Select(u => this.TheModelFactory.Create(u)));
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}", Name = "GetUserById")]
         public async Task<IHttpActionResult> GetUser(string Id)
         {
@@ -33,6 +36,7 @@ namespace GithubExtension.Security.WebApi.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("user/{username}")]
         public async Task<IHttpActionResult> GetUserByName(string username)
         {
@@ -47,35 +51,75 @@ namespace GithubExtension.Security.WebApi.Controllers
 
         }
 
-        //[Route("create")]
-        //public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        [Authorize(Roles = "Admin")]
+        [Route("user/{id:guid}/roles")]
+        [HttpPut]
+        public async Task<IHttpActionResult> AssignRolesToUser([FromUri] string id, [FromBody] string[] rolesToAssign)
+        {
 
-        //    var user = new ApplicationUser()
-        //    {
-        //        UserName = createUserModel.Username,
-        //        Email = createUserModel.Email,
-        //        FirstName = createUserModel.FirstName,
-        //        LastName = createUserModel.LastName,
-        //        Level = 3,
-        //        JoinDate = DateTime.Now.Date,
-        //    };
+            var appUser = await this.ApplicationUserManager.FindByIdAsync(id);
 
-        //    // Change identity user to app user
-        //    IdentityResult addUserResult = await this.ApplicationUserManager.CreateAsync(user, createUserModel.Password);
+            if (appUser == null)
+            {
+                return NotFound();
+            }
 
-        //    if (!addUserResult.Succeeded)
-        //    {
-        //        return GetErrorResult(addUserResult);
-        //    }
+            var currentRoles = await this.ApplicationUserManager.GetRolesAsync(appUser.Id);
 
-        //    Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
+            var rolesNotExists = rolesToAssign.Except(this.SecurityRoleManager.Roles.Select(x => x.Name)).ToArray();
 
-        //    return Created(locationHeader, TheModelFactory.Create(user));
-        //}
+            if (rolesNotExists.Count() > 0)
+            {
+
+                ModelState.AddModelError("", string.Format("Roles '{0}' does not exixts in the system", string.Join(",", rolesNotExists)));
+                return BadRequest(ModelState);
+            }
+
+            IdentityResult removeResult = await this.ApplicationUserManager.RemoveFromRolesAsync(appUser.Id, currentRoles.ToArray());
+
+            if (!removeResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Failed to remove user roles");
+                return BadRequest(ModelState);
+            }
+
+            IdentityResult addResult = await this.ApplicationUserManager.AddToRolesAsync(appUser.Id, rolesToAssign);
+
+            if (!addResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Failed to add user roles");
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
+        }
+
+        [Route("create")]
+        public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = new User()
+            {
+                UserName = createUserModel.Username,
+                Email = createUserModel.Email,
+              
+            };
+
+            // Change identity user to app user
+            IdentityResult addUserResult = await this.ApplicationUserManager.CreateAsync(user, createUserModel.Password);
+
+            if (!addUserResult.Succeeded)
+            {
+                return GetErrorResult(addUserResult);
+            }
+
+            Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
+
+            return Created(locationHeader, TheModelFactory.Create(user));
+        }
     }
 }

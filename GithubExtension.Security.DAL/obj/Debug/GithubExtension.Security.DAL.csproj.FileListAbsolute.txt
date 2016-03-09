@@ -28,3 +28,32 @@ C:\Users\Andriy\Documents\Visual Studio 2013\Projects\GithubExtension.Authorizat
 C:\Users\Andriy\Documents\Visual Studio 2013\Projects\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.initial.resources
 C:\Users\Andriy\Documents\Visual Studio 2013\Projects\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.csproj.GenerateResource.Cache
 C:\Users\Andriy\Documents\Visual Studio 2013\Projects\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.customclaim.resources
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\GithubExtension.Security.DAL.dll.config
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\GithubExtension.Security.DAL.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\GithubExtension.Security.DAL.pdb
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\EntityFramework.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\EntityFramework.SqlServer.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.AspNet.Identity.Owin.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.Security.Cookies.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.Security.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.Security.OAuth.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Newtonsoft.Json.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Owin.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\EntityFramework.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\EntityFramework.SqlServer.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.AspNet.Identity.Owin.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.Security.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.Security.Cookies.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Microsoft.Owin.Security.OAuth.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\bin\Debug\Newtonsoft.Json.xml
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.initial.resources
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.customclaim.resources
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.csproj.GenerateResource.Cache
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.dll
+D:\GithubExtension.Authorization-master\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.pdb
