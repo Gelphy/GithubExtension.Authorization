@@ -84,6 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\UserConverter.cs" />
     <Compile Include="Entities\Claim.cs" />
     <Compile Include="Entities\Project.cs" />
     <Compile Include="Infrastructure\Configuration.cs" />
@@ -96,6 +97,10 @@
     <Compile Include="Migrations\201603071539099_customclaim.cs" />
     <Compile Include="Migrations\201603071539099_customclaim.Designer.cs">
       <DependentUpon>201603071539099_customclaim.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603092120157_RemoveUserProjectEntity.cs" />
+    <Compile Include="Migrations\201603092120157_RemoveUserProjectEntity.Designer.cs">
+      <DependentUpon>201603092120157_RemoveUserProjectEntity.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -114,7 +119,11 @@
     <EmbeddedResource Include="Migrations\201603071539099_customclaim.resx">
       <DependentUpon>201603071539099_customclaim.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603092120157_RemoveUserProjectEntity.resx">
+      <DependentUpon>201603092120157_RemoveUserProjectEntity.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
