@@ -8,6 +8,7 @@ namespace GithubExtension.Security.DAL.Context
     public class SecurityContext : IdentityDbContext<User>
     {
         public DbSet<Repository> Repositories { get; set; }
+        public DbSet<SecurityRole> SecurityRoles { get; set; }
          
         public SecurityContext()
             : base("GitHubExtension")
