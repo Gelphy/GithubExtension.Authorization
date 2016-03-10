@@ -1,10 +1,6 @@
 ﻿using GithubExtension.Security.DAL.Entities;
 using GithubExtension.Security.DAL.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Web;
 using System.Web.Http.Routing;
 using Microsoft.AspNet.Identity.EntityFramework;
 

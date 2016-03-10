@@ -87,3 +87,4 @@ D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubEx
 D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.csproj.GenerateResource.Cache
 D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.dll
 D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.pdb
+D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.RemoveUserProjectEntity.resources

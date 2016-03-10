@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using  GithubExtension.Security.DAL.Infrastructure;
 using System.Web.Http;
-using System.Net.Http;
 using GithubExtension.Security.WebApi.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -19,7 +18,7 @@ namespace GithubExtension.Security.WebApi.Controllers
         [Route("{id:guid}", Name = "GetRoleById")]
         public async Task<IHttpActionResult> GetRole(string Id)
         {
-            var role = await this.SecurityRoleManager.FindByIdAsync(Id);
+            var role = await SecurityRoleManager.FindByIdAsync(Id);
 
             if (role != null)
             {
@@ -33,7 +32,7 @@ namespace GithubExtension.Security.WebApi.Controllers
         [Route("", Name = "GetAllRoles")]
         public IHttpActionResult GetAllRoles()
         {
-            var roles = this.SecurityRoleManager.Roles;
+            var roles = SecurityRoleManager.Roles;
 
             return Ok(roles);
         }

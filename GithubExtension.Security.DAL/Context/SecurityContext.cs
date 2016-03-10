@@ -7,9 +7,8 @@ namespace GithubExtension.Security.DAL.Context
     // TODO: Check internal
     public class SecurityContext : IdentityDbContext<User>
     {
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<Claim> Claims { get; set; }
-
+        public DbSet<Repository> Repositories { get; set; }
+         
         public SecurityContext()
             : base("GitHubExtension")
         {
@@ -39,6 +38,4 @@ namespace GithubExtension.Security.DAL.Context
             // initial configuration will go here
         }
     }
-
-   
 }

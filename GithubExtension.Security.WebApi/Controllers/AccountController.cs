@@ -1,56 +1,64 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
+using GithubExtension.Security.DAL.Context;
 using GithubExtension.Security.DAL.Entities;
 using GithubExtension.Security.WebApi.Models;
-using Newtonsoft.Json;
-
+using GithubExtension.Security.WebApi.Services;
+using GithubExtension.Security.WebApi.Converters;
 
 namespace GithubExtension.Security.WebApi.Controllers
 {
     [RoutePrefix("api/accounts")]
     public class AccountsController : BaseApiController
     {
+        private IGithubService _githubService;
+        private SecurityContext context;
+
+        public AccountsController()
+        {
+            context = new SecurityContext();
+
+            _githubService = new GithubService();
+        }
+
         [Authorize(Roles = "Admin")]
         [Route("users")]
         public IHttpActionResult GetUsers()
         {
-            return Ok(this.ApplicationUserManager.Users.ToList().Select(u => this.TheModelFactory.Create(u)));
+            return Ok(ApplicationUserManager.Users.ToList().Select(u => TheModelFactory.Create(u)));
         }
 
         [Authorize(Roles = "Admin")]
         [Route("user/{id:guid}", Name = "GetUserById")]
-        public async Task<IHttpActionResult> GetUser(string Id)
+        public async Task<IHttpActionResult> GetUser(string id)
         {
-            var user = await this.ApplicationUserManager.FindByIdAsync(Id);
+            var user = await ApplicationUserManager.FindByIdAsync(id);
 
             if (user != null)
             {
-                return Ok(this.TheModelFactory.Create(user));
+                return Ok(TheModelFactory.Create(user));
             }
 
             return NotFound();
-
         }
 
         [Authorize(Roles = "Admin")]
         [Route("user/{username}")]
         public async Task<IHttpActionResult> GetUserByName(string username)
         {
-            var user = await this.ApplicationUserManager.FindByNameAsync(username);
+            var user = await ApplicationUserManager.FindByNameAsync(username);
 
             if (user != null)
             {
-                return Ok(this.TheModelFactory.Create(user));
+                return Ok(TheModelFactory.Create(user));
             }
 
             return NotFound();
-
         }
 
         [Authorize(Roles = "Admin")]
@@ -59,25 +67,25 @@ namespace GithubExtension.Security.WebApi.Controllers
         public async Task<IHttpActionResult> AssignRolesToUser([FromUri] string id, [FromBody] string[] rolesToAssign)
         {
 
-            var appUser = await this.ApplicationUserManager.FindByIdAsync(id);
+            var appUser = await ApplicationUserManager.FindByIdAsync(id);
 
             if (appUser == null)
             {
                 return NotFound();
             }
 
-            var currentRoles = await this.ApplicationUserManager.GetRolesAsync(appUser.Id);
+            var currentRoles = await ApplicationUserManager.GetRolesAsync(appUser.Id);
 
-            var rolesNotExists = rolesToAssign.Except(this.SecurityRoleManager.Roles.Select(x => x.Name)).ToArray();
+            var rolesNotExists = rolesToAssign.Except(SecurityRoleManager.Roles.Select(x => x.Name)).ToArray();
 
-            if (rolesNotExists.Count() > 0)
+            if (rolesNotExists.Any())
             {
 
                 ModelState.AddModelError("", string.Format("Roles '{0}' does not exixts in the system", string.Join(",", rolesNotExists)));
                 return BadRequest(ModelState);
             }
 
-            IdentityResult removeResult = await this.ApplicationUserManager.RemoveFromRolesAsync(appUser.Id, currentRoles.ToArray());
+            IdentityResult removeResult = await ApplicationUserManager.RemoveFromRolesAsync(appUser.Id, currentRoles.ToArray());
 
             if (!removeResult.Succeeded)
             {
@@ -85,7 +93,7 @@ namespace GithubExtension.Security.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityResult addResult = await this.ApplicationUserManager.AddToRolesAsync(appUser.Id, rolesToAssign);
+            IdentityResult addResult = await ApplicationUserManager.AddToRolesAsync(appUser.Id, rolesToAssign);
 
             if (!addResult.Succeeded)
             {
@@ -98,47 +106,43 @@ namespace GithubExtension.Security.WebApi.Controllers
 
         [Route("create")]
         [HttpPost]
+        //[Authorize]
         public async Task<IHttpActionResult> CreateUser(string token)
         {
-            using (var httpClient = new HttpClient())
+            UserDto userDto = await _githubService.GetUserAsync(token);
+
+
+            //TODO: Use converter
+            var user = new User()
             {
-                var requestUri = string.Format("https://api.github.com/user?access_token={0}", token);
-                var message = new HttpRequestMessage(HttpMethod.Get, requestUri);
-                message.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
-
-                var response = await httpClient.SendAsync(message);
+                //TODO: Get Primary Email from GitHub
+                Email = "",
+                UserName = userDto.Login,
+                Token = token,
+                ProviderId = userDto.GitHubId,
                 
+            };
 
-                if (!response.IsSuccessStatusCode)
-                    return StatusCode( (HttpStatusCode) 422 );
-
-
-                var dto = JsonConvert.DeserializeObject<UserDTO>(await response.Content.ReadAsStringAsync());
-                var user = new User()
-                {
-                    Email = "",
-                    UserName = dto.Login,
-                    Token = token
-                };
-
-                IdentityResult addUserResult = await ApplicationUserManager.CreateAsync(user);
-
-                if (!addUserResult.Succeeded)
-                {
-                    return GetErrorResult(addUserResult);
-                }
-
-
-                // Change identity user to app user
-
-                Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
-
-                return Created(locationHeader, TheModelFactory.Create(user));
+            IdentityResult addUserResult = await ApplicationUserManager.CreateAsync(user);
+            if (!addUserResult.Succeeded)
+            {
+                return GetErrorResult(addUserResult);
             }
-          
 
-           
+            //Geting repos for user
+            List<RepositoryDto> repos = await _githubService.GetReposAsync(user.UserName, token);
+            var repositoriesToAdd = repos.Select(r => r.ToEntity()).ToArray();
 
+            context.Repositories.AddOrUpdate(repositoriesToAdd);
+            foreach (var repository in repositoriesToAdd)
+            {
+                user.Repositories = repositoriesToAdd;
+            }
+            //ApplicationUserManager.AddClaimAsync()
+            
+            // Change identity user to app user
+            Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
+            return Created(locationHeader, TheModelFactory.Create(user));
         }
     }
 }
