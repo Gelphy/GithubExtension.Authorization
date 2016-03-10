@@ -9,9 +9,10 @@ namespace GithubExtension.Security.WebApi.Converters
         {
             var repositoryEntity = new Repository()
             {
-               Id = repository.Id,
-               Name =  repository.Name,
-               Url =  repository.Url
+                Id = repository.Id,
+                GitHubId = repository.GitHubId,
+                Name =  repository.Name,
+                Url =  repository.Url
             };
 
             return repositoryEntity;

@@ -8,5 +8,7 @@ namespace GithubExtension.Security.WebApi.Services
     {
         Task<UserDto> GetUserAsync(string token);
         Task<List<RepositoryDto>> GetReposAsync(string userName, string token);
+        Task<string> GetPrimaryEmailForUser(string token);
+        Task<List<CollaboratorDto>> GetCollaboratorsForRepo(string owner, string repository, string token);
     }
 }

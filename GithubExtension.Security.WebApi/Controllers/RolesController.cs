@@ -88,7 +88,7 @@ namespace GithubExtension.Security.WebApi.Controllers
 
             if (role == null)
             {
-                ModelState.AddModelError("", "Role does not exist");
+                ModelState.AddModelError("", "SecurityRole does not exist");
                 return BadRequest(ModelState);
             }
 

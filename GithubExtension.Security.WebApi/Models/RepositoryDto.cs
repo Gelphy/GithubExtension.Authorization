@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace GithubExtension.Security.WebApi.Models
 {
@@ -6,6 +7,8 @@ namespace GithubExtension.Security.WebApi.Models
     public class RepositoryDto
     {
         public int Id { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public int GitHubId { get; set; }
         public string Name { get; set; }
         public string Url { get; set; }
     }

@@ -13,7 +13,7 @@ namespace GithubExtension.Security.WebApi.Models
         [Display(Name = "Username")]
         public string Username { get; set; }
  
-        [Display(Name = "Role Name")]
+        [Display(Name = "SecurityRole Name")]
         public string RoleName { get; set; }
  
         [Required]

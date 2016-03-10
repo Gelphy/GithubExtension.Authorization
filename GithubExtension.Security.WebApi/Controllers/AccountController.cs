@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -110,19 +109,21 @@ namespace GithubExtension.Security.WebApi.Controllers
         public async Task<IHttpActionResult> CreateUser(string token)
         {
             UserDto userDto = await _githubService.GetUserAsync(token);
+            List<RepositoryDto> repos = await _githubService.GetReposAsync(userDto.Login, token);
 
+            var repositoriesToAdd = repos.Select(r => r.ToEntity()).ToArray();
 
             //TODO: Use converter
             var user = new User()
             {
-                //TODO: Get Primary Email from GitHub
-                Email = "",
+                Email = userDto.Email,
                 UserName = userDto.Login,
                 Token = token,
                 ProviderId = userDto.GitHubId,
-                
+                Repositories = repositoriesToAdd,
             };
 
+            //context.Repositories.AddOrUpdate(repositoriesToAdd);
             IdentityResult addUserResult = await ApplicationUserManager.CreateAsync(user);
             if (!addUserResult.Succeeded)
             {
@@ -130,16 +131,8 @@ namespace GithubExtension.Security.WebApi.Controllers
             }
 
             //Geting repos for user
-            List<RepositoryDto> repos = await _githubService.GetReposAsync(user.UserName, token);
-            var repositoriesToAdd = repos.Select(r => r.ToEntity()).ToArray();
-
-            context.Repositories.AddOrUpdate(repositoriesToAdd);
-            foreach (var repository in repositoriesToAdd)
-            {
-                user.Repositories = repositoriesToAdd;
-            }
-            //ApplicationUserManager.AddClaimAsync()
             
+
             // Change identity user to app user
             Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
             return Created(locationHeader, TheModelFactory.Create(user));
