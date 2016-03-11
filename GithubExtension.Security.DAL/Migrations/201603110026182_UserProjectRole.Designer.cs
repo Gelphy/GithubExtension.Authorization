@@ -7,13 +7,13 @@ namespace GithubExtension.Security.DAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.0-30225")]
-    public sealed partial class RefactoringDbStageTwo : IMigrationMetadata
+    public sealed partial class UserProjectRole : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(RefactoringDbStageTwo));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(UserProjectRole));
         
         string IMigrationMetadata.Id
         {
-            get { return "201603102102196_RefactoringDbStageTwo"; }
+            get { return "201603110026182_UserProjectRole"; }
         }
         
         string IMigrationMetadata.Source

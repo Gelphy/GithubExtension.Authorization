@@ -7,7 +7,7 @@ namespace GithubExtension.Security.DAL.Entities
     public class SecurityRole 
     {
         public int Id { get; set; }
-        public int Name { get; set; }
+        public string Name { get; set; }
 
         public virtual ICollection<UserRepositoryRole> UserRepositoryRoles { get; set; }
 

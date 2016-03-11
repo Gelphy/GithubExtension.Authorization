@@ -44,6 +44,10 @@ namespace GithubExtension.Security.DAL.Migrations
             var adminUser = manager.FindByName("senioroman4uk");
 
             manager.AddToRoles(adminUser.Id, "Admin");
+
+            context.SecurityRoles.AddOrUpdate(new SecurityRole() { Name = "Admin" });
+            context.SecurityRoles.AddOrUpdate(new SecurityRole() { Name = "Developer" });
+            context.SecurityRoles.AddOrUpdate(new SecurityRole() { Name = "Reviewer" });
         }
     }
 }

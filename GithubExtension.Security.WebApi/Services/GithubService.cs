@@ -88,7 +88,6 @@ namespace GithubExtension.Security.WebApi.Services
             if (!response.IsSuccessStatusCode)
                 throw new UnsuccessfullRequestException();
 
-            //Todo rewise, move to another controller
             return JsonConvert.DeserializeObject<List<RepositoryDto>>(await response.Content.ReadAsStringAsync());
         }
 

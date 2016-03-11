@@ -1,14 +1,19 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using GithubExtension.Security.DAL.Context;
 using GithubExtension.Security.DAL.Entities;
+using GithubExtension.Security.DAL.Infrastructure;
 using GithubExtension.Security.WebApi.Models;
 using GithubExtension.Security.WebApi.Services;
 using GithubExtension.Security.WebApi.Converters;
+using Microsoft.AspNet.Identity.Owin;
+
 
 namespace GithubExtension.Security.WebApi.Controllers
 {
@@ -16,11 +21,18 @@ namespace GithubExtension.Security.WebApi.Controllers
     public class AccountsController : BaseApiController
     {
         private IGithubService _githubService;
-        private SecurityContext context;
+
+        private SecurityContext Context
+        {
+            get
+            {
+                return HttpContext.Current.GetOwinContext().Get<SecurityContext>();
+            }
+        }
 
         public AccountsController()
         {
-            context = new SecurityContext();
+            //Context = new SecurityContext();
 
             _githubService = new GithubService();
         }
@@ -111,8 +123,10 @@ namespace GithubExtension.Security.WebApi.Controllers
             UserDto userDto = await _githubService.GetUserAsync(token);
             List<RepositoryDto> repos = await _githubService.GetReposAsync(userDto.Login, token);
 
-            var repositoriesToAdd = repos.Select(r => r.ToEntity()).ToArray();
-
+            // TODO: ceck exists
+            var role = await Context.SecurityRoles.FirstOrDefaultAsync(r => r.Name == "Admin");
+            var repositoriesToAdd = repos.Select(r => new UserRepositoryRole() { Repository = r.ToEntity(), SecurityRole = role}).ToList();
+            
             //TODO: Use converter
             var user = new User()
             {
@@ -120,19 +134,16 @@ namespace GithubExtension.Security.WebApi.Controllers
                 UserName = userDto.Login,
                 Token = token,
                 ProviderId = userDto.GitHubId,
-                Repositories = repositoriesToAdd,
+                UserRepositoryRoles = repositoriesToAdd
             };
 
-            //context.Repositories.AddOrUpdate(repositoriesToAdd);
             IdentityResult addUserResult = await ApplicationUserManager.CreateAsync(user);
             if (!addUserResult.Succeeded)
             {
                 return GetErrorResult(addUserResult);
             }
 
-            //Geting repos for user
             
-
             // Change identity user to app user
             Uri locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
             return Created(locationHeader, TheModelFactory.Create(user));

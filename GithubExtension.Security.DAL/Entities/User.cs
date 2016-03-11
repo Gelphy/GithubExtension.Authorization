@@ -11,7 +11,12 @@ namespace GithubExtension.Security.DAL.Entities
         public string Token { get; set; }
         public int ProviderId { get; set; }
 
-        public virtual ICollection<Repository> Repositories { get; set; } 
+        public virtual ICollection<UserRepositoryRole> UserRepositoryRoles { get; set; }
+
+        public User()
+        {
+            UserRepositoryRoles = new List<UserRepositoryRole>();
+        }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User> manager, string authenticationType)
         {
