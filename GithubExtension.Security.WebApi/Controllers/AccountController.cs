@@ -3,16 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using GithubExtension.Security.DAL.Context;
 using GithubExtension.Security.DAL.Entities;
-using GithubExtension.Security.DAL.Infrastructure;
+using GithubExtension.Security.WebApi.Attributes;
 using GithubExtension.Security.WebApi.Models;
 using GithubExtension.Security.WebApi.Services;
 using GithubExtension.Security.WebApi.Converters;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 
 
 namespace GithubExtension.Security.WebApi.Controllers
@@ -72,43 +74,42 @@ namespace GithubExtension.Security.WebApi.Controllers
             return NotFound();
         }
 
-        [Authorize(Roles = "Admin")]
-        [Route("user/{id:guid}/roles")]
+        [ClaimsAuthorization(ClaimType = "Role", ClaimValue = "Admin")]
+        [Route("user/{userId:guid}/roles")]
         [HttpPut]
-        public async Task<IHttpActionResult> AssignRolesToUser([FromUri] string id, [FromBody] string[] rolesToAssign)
+        public async Task<IHttpActionResult> AssignRolesToUser([FromUri] int reposId, [FromUri] string userId, [FromBody] string roleToAssign)
         {
-
-            var appUser = await ApplicationUserManager.FindByIdAsync(id);
+            
+            var appUser = await ApplicationUserManager.FindByIdAsync(userId);
 
             if (appUser == null)
             {
                 return NotFound();
             }
-
-            var currentRoles = await ApplicationUserManager.GetRolesAsync(appUser.Id);
-
-            var rolesNotExists = rolesToAssign.Except(SecurityRoleManager.Roles.Select(x => x.Name)).ToArray();
-
-            if (rolesNotExists.Any())
+          
+            var role = await Context.SecurityRoles.FirstOrDefaultAsync(r => r.Name == roleToAssign);
+            if (role == null)
             {
-
-                ModelState.AddModelError("", string.Format("Roles '{0}' does not exixts in the system", string.Join(",", rolesNotExists)));
+                ModelState.AddModelError("", string.Format("Roles '{0}' does not exixts in the system", roleToAssign));
                 return BadRequest(ModelState);
             }
 
-            IdentityResult removeResult = await ApplicationUserManager.RemoveFromRolesAsync(appUser.Id, currentRoles.ToArray());
+            var repositoryRole = appUser.UserRepositoryRoles.FirstOrDefault(r => r.RepositoryId == reposId);
+            if (repositoryRole != null)
+                appUser.UserRepositoryRoles.Remove(repositoryRole);
+            appUser.UserRepositoryRoles.Add(new UserRepositoryRole() { RepositoryId = reposId, SecurityRoleId = role.Id});
+            
+            //Refreshing claim cookie need to check it
+            var identity = await appUser.GenerateUserIdentityAsync(ApplicationUserManager, DefaultAuthenticationTypes.ApplicationCookie);
+            identity.AddClaim(new Claim("Role", roleToAssign, reposId.ToString()));
+            HttpContext.Current.GetOwinContext().Authentication.AuthenticationResponseGrant = new AuthenticationResponseGrant(identity, new AuthenticationProperties { IsPersistent = true });
 
-            if (!removeResult.Succeeded)
+            IdentityResult updateResult = await ApplicationUserManager.UpdateAsync(appUser);
+
+
+            if (!updateResult.Succeeded)
             {
                 ModelState.AddModelError("", "Failed to remove user roles");
-                return BadRequest(ModelState);
-            }
-
-            IdentityResult addResult = await ApplicationUserManager.AddToRolesAsync(appUser.Id, rolesToAssign);
-
-            if (!addResult.Succeeded)
-            {
-                ModelState.AddModelError("", "Failed to add user roles");
                 return BadRequest(ModelState);
             }
 

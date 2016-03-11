@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Repository.cs" />
-    <Compile Include="Entities\UserRepository.cs" />
     <Compile Include="Entities\UserRepositoryRole.cs" />
     <Compile Include="Infrastructure\Configuration.cs" />
     <Compile Include="Infrastructure\ExtendedClaimsProvider.cs" />

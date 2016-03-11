@@ -88,3 +88,6 @@ D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubEx
 D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.dll
 D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.pdb
 D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.RemoveUserProjectEntity.resources
+D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.RefactoringDbStageTwo.resources
+D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.GitHubIdForRepository.resources
+D:\GithubExtension.Authorization\GithubExtension.Security.DAL\obj\Debug\GithubExtension.Security.DAL.Migrations.MergeDbs.resources
